@@ -1,7 +1,7 @@
 '''
 This file contains the eMPC class, which is used to control the ev2gym environment using the eMPC algorithm.
 
-Authors: Cesar Diaz-Londono, Stavros Orfanoudakis
+Authors: Anonymous, Anonymous
 '''
 
 

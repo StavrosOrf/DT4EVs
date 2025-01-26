@@ -46,7 +46,6 @@ if __name__ == "__main__":
     run = wandb.init(project='DT4EVs',
                      sync_tensorboard=True,
                      group=group_name,
-                     entity='stavrosorf',
                      name=run_name,
                      save_code=True,
                      )

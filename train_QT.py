@@ -399,7 +399,6 @@ def experiment(
         wandb.init(
             name=exp_prefix,
             group=group_name,
-            entity='stavrosorf',
             project='DT4EVs',
             save_code=True,
             config=vars

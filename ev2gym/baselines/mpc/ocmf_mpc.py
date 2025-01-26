@@ -1,7 +1,7 @@
 '''
 This file contains the implementation of the OCMF_V2G and OCMF_G2V MPC
 
-Authors: Cesar Diaz-Londono, Stavros Orfanoudakis
+Authors: Anonymous, Anonymous
 '''
 
 import gurobipy as gp

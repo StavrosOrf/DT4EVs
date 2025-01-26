@@ -10,7 +10,6 @@ api = wandb.Api()
 
 # Replace 'your_project_name' and 'your_entity_name' with your actual project and entity
 project_name = "DT4EVs"
-entity_name = "stavrosorf"
 group_name = "PaperExpsDT_25cs"
 # group_name = "25_ClassicRL_tests"
 # group_name = "PaperExpsDT_250cs"

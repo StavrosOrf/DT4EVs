@@ -7,7 +7,7 @@ srun --mpi=pmix --job-name=interactive --partition=compute --cpus-per-task=1 --q
 import os
 import random
 
-seeds = [0]
+seeds = [10,20,30,40]
 # config = "PST_V2G_ProfixMax_25.yaml"
 # eval_replay_path = "./eval_replays/PST_V2G_ProfixMax_25_optimal_25_50/"
 
@@ -129,7 +129,7 @@ for model_type in ['dt','gnn_act_emb']:  # 'dt','gnn_act_emb
                                 # gpu-a100, gpu
                                 command = '''#!/bin/sh
 #!/bin/bash
-#SBATCH --job-name="m_dt"
+#SBATCH --job-name="dt_pes"
 #SBATCH --partition=gpu
 ''' + \
                                     f'#SBATCH --time={time}:00:00' + \
@@ -197,29 +197,29 @@ conda deactivate
 
                                 os.system('sbatch run_tmp.sh')
 
-                                command = 'tmux new-session -d \; send-keys " /home/sorfanouda/anaconda3/envs/dt/bin/python train_DT.py' + \
-                                    ' --dataset ' + dataset + \
-                                    ' --K ' + str(K) + \
-                                    ' --device cuda:0' + \
-                                    ' --model_type ' + model_type + \
-                                    ' --embed_dim ' + str(embed_dim) + \
-                                    ' --n_layer ' + str(n_layer) + \
-                                    ' --n_head ' + str(n_head) + \
-                                    ' --seed ' + str(seed) + \
-                                    ' --max_iters=' + str(1) + \
-                                    ' --batch_size=' + str(batch_size) + \
-                                    ' --num_steps_per_iter=' + str(1) + \
-                                    ' --feature_dim ' + str(feature_dim) + \
-                                    ' --GNN_hidden_dim ' + str(GNN_hidden_dim) + \
-                                    ' --act_GNN_hidden_dim ' + str(act_GNN_hidden_dim) + \
-                                    ' --action_masking ' + str(action_mask) + \
-                                    ' --group_name ' + '"2ndTests_"' + \
-                                    ' --config_file ' + config + \
-                                    ' --eval_replay_path ' + eval_replay_path + \
-                                    ' --name ' + str(run_name) + \
-                                    '" Enter'
+                                # command = 'tmux new-session -d \; send-keys " /home/sorfanouda/anaconda3/envs/dt/bin/python train_DT.py' + \
+                                #     ' --dataset ' + dataset + \
+                                #     ' --K ' + str(K) + \
+                                #     ' --device cuda:0' + \
+                                #     ' --model_type ' + model_type + \
+                                #     ' --embed_dim ' + str(embed_dim) + \
+                                #     ' --n_layer ' + str(n_layer) + \
+                                #     ' --n_head ' + str(n_head) + \
+                                #     ' --seed ' + str(seed) + \
+                                #     ' --max_iters=' + str(1) + \
+                                #     ' --batch_size=' + str(batch_size) + \
+                                #     ' --num_steps_per_iter=' + str(1) + \
+                                #     ' --feature_dim ' + str(feature_dim) + \
+                                #     ' --GNN_hidden_dim ' + str(GNN_hidden_dim) + \
+                                #     ' --act_GNN_hidden_dim ' + str(act_GNN_hidden_dim) + \
+                                #     ' --action_masking ' + str(action_mask) + \
+                                #     ' --group_name ' + '"DT_Tests_"' + \
+                                #     ' --config_file ' + config + \
+                                #     ' --eval_replay_path ' + eval_replay_path + \
+                                #     ' --name ' + str(run_name) + \
+                                #     '" Enter'
                                     
-                                os.system(command=command)
-                                print(command)       
-                                import time as timer                      
-                                timer.sleep(5)
+                                # os.system(command=command)
+                                # print(command)       
+                                # import time as timer                      
+                                # timer.sleep(5)

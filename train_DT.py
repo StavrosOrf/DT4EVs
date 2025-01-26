@@ -487,7 +487,7 @@ def experiment(vars):
             name=exp_prefix,
             group=group_name,
             entity='stavrosorf',
-            project='DT4EVs',
+            project='DT4EVs_PES',
             save_code=True,
             config=vars
         )

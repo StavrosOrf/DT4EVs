@@ -7,13 +7,15 @@ srun --mpi=pmix --job-name=interactive --partition=compute --cpus-per-task=1 --q
 import os
 import random
 
-seeds = [70]
-config = "PST_V2G_ProfixMax_25.yaml"
-eval_replay_path = "./eval_replays/PST_V2G_ProfixMax_25_optimal_25_50/"
+seeds = [0]
+# config = "PST_V2G_ProfixMax_25.yaml"
+# eval_replay_path = "./eval_replays/PST_V2G_ProfixMax_25_optimal_25_50/"
 
-config = "PST_V2G_ProfixMax_250.yaml"
-eval_replay_path = "./eval_replays/PST_V2G_ProfixMax_250_optimal_250_50/"
+# config = "PST_V2G_ProfixMax_250.yaml"
+# eval_replay_path = "./eval_replays/PST_V2G_ProfixMax_250_optimal_250_50/"
 
+config = "PST_V2G_ProfixMax_50_PES.yaml"
+eval_replay_path = "./eval_replays/PST_V2G_ProfixMax_50_PES_optimal_50_50/"
 
 datasets_list = [
     'random_100',
@@ -54,6 +56,12 @@ big_datasets_list = [
     'bau_250_3000',
 ]
 
+datasets_50_list = [
+    'random_50_5000',
+    # 'optimal_50_5000',
+    'bau_50_5000',
+]
+
 # Extra arguments for the python script
 num_steps_per_iter = 1000
 
@@ -62,65 +70,58 @@ if not os.path.exists('./slurm_logs'):
     os.makedirs('./slurm_logs')
 
 # 'gnn_dt', 'gnn_in_out_dt', 'dt'
-for model_type in ['gnn_act_emb']:  # 'dt','gnn_act_emb
-    for action_mask in [False]:
-        for K in [2]:
+for model_type in ['dt','gnn_act_emb']:  # 'dt','gnn_act_emb
+    for action_mask in [True]:
+        for K in [5]:
             for _ in [128]:
-                for dataset in ['optimal_1000']:
+                for dataset in datasets_50_list:
                     for _ in [128]:  # 128, 512
                         for n_layer, n_head in [(3, 4)]:  # (3, 1),(3,4)
                             for counter, seed in enumerate(seeds):
 
-                                if "250" in config:
-                                    memory = 40
-                                    if model_type == 'gnn_act_emb':
-                                        time = 46
-                                    else:
-                                        time = 20
+                                # if "250" in config:
+                                #     memory = 40
+                                #     if model_type == 'gnn_act_emb':
+                                #         time = 46
+                                #     else:
+                                #         time = 20
 
-                                    cpu_cores = 2
+                                #     cpu_cores = 2
 
-                                    feature_dim = 16
-                                    GNN_hidden_dim = 64
-                                    num_gcn_layers = 3
-                                    act_GNN_hidden_dim = 64
-                                    max_iters = 400
-                                    batch_size = 64
-                                    num_steps_per_iter = 3000
-                                    embed_dim = 256
+                                #     feature_dim = 16
+                                #     GNN_hidden_dim = 64
+                                #     num_gcn_layers = 3
+                                #     act_GNN_hidden_dim = 64
+                                #     max_iters = 400
+                                #     batch_size = 64
+                                #     num_steps_per_iter = 3000
+                                #     embed_dim = 256
 
-                                elif "25" in config:
+                                # elif "25" in config:
 
-                                    if "10000" in dataset:
-                                        memory = 16
-                                    else:
-                                        memory = 8
 
-                                    if model_type == 'gnn_act_emb':
-                                        time = 20
-                                    else:
-                                        time = 10
+                                memory = 25
 
-                                    if K == 10:
-                                        time = time * 2
-                                    elif K > 10:
-                                        time = time * 3
-
-                                    if time > 46:
-                                        time = 46
-
-                                    cpu_cores = 1
-
-                                    feature_dim = 8
-                                    GNN_hidden_dim = 32
-                                    num_gcn_layers = 3
-                                    act_GNN_hidden_dim = 32
-                                    max_iters = 250
-                                    batch_size = 128
-                                    num_steps_per_iter = 1000
-                                    embed_dim = 128
+                                if model_type == 'gnn_act_emb':
+                                    time = 48
                                 else:
-                                    raise ValueError("Invalid config file")
+                                    time = 25
+
+
+                                if time > 46:
+                                    time = 46
+
+                                cpu_cores = 1
+
+                                feature_dim = 8
+                                GNN_hidden_dim = 32
+                                num_gcn_layers = 3
+                                act_GNN_hidden_dim = 32
+                                max_iters = 250
+                                batch_size = 128
+                                num_steps_per_iter = 1000
+                                embed_dim = 128
+
 
                                 # run_name = f'{algorithm}_run_{counter}_{random.randint(0, 100000)}'
                                 run_name = f'{model_type}_run_{seed}_K={K}_dataset={dataset}_'

@@ -23,12 +23,7 @@ if __name__ == "__main__":
     args = arg_parser()
     SAVE_EVAL_REPLAYS = args.save_eval_replays
 
-    if args.env == "25":
-        args.config_file = "./config_files/PST_V2G_ProfixMax_25.yaml"
-    elif args.env == "250":
-        args.config_file = "./config_files/PST_V2G_ProfixMax_250.yaml"
-    else:
-        raise ValueError(f"Environment {args.env} not supported")
+    args.config_file = "./config_files/PST_V2G_ProfixMax_50_PES.yaml"
 
     reward_function = PST_V2G_ProfitMax_reward
     state_function = PST_V2G_ProfitMax_state
@@ -129,11 +124,7 @@ if __name__ == "__main__":
 
             new_replay_path = f"./replay/replay_{temp_env.sim_name}.pkl"
 
-            if args.env == "25":
-                timelimit = 60
-
-            elif args.env == "250":
-                timelimit = 180
+            timelimit = 120
 
             agent = mo_PST_V2GProfitMaxOracleGB(new_replay_path,
                                                 timelimit=timelimit,

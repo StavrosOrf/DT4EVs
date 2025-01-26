@@ -36,20 +36,9 @@ def eval():
 
     save_plots = True
 
-    replay_path = "./replay/replay_sim_2024_02_21_056441.pkl"
     replay_path = None
 
-    config_file = "./config_files/PST_V2G_ProfixMax_25.yaml"
-    # config_file = "./config_files/PST_V2G_ProfixMax_250.yaml"
-
-    # env = EV2Gym(config_file=config_file,
-    #              load_from_replay_path=replay_path,
-    #              verbose=False,
-    #              save_replay=True,
-    #              save_plots=save_plots,
-    #              state_function=PublicPST_GNN,
-    #              reward_function=SimpleReward,
-    #              )
+    config_file = "./config_files/PST_V2G_ProfixMax_50_PES.yaml"
 
     env = EV2Gym(config_file=config_file,
                  generate_rnd_game=True,
@@ -133,7 +122,7 @@ def eval():
             # print(stats)
             print_statistics(env)
             break
-    return
+    # return
 
     new_replay_path = f"replay/replay_{env.sim_name}.pkl"
 
@@ -189,8 +178,8 @@ def eval():
 
 if __name__ == "__main__":
 
-    # eval()
-    # exit()
+    eval()
+    exit()
     
     
     successfully_evaluated = 0

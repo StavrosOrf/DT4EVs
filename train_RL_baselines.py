@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument('--group_name', type=str, default="")
     parser.add_argument('--train_steps', type=int, default=1_000_000)        
     parser.add_argument('--config_file', type=str,
-                        default="./config_files/PST_V2G_ProfixMax_25.yaml")
+                        default="./config_files/PST_V2G_ProfixMax_50_PES.yaml")
 
     algorithm = parser.parse_args().algorithm
     device = parser.parse_args().device
@@ -37,18 +37,18 @@ if __name__ == "__main__":
 
     config = yaml.load(open(config_file, 'r'), Loader=yaml.FullLoader)
 
-    group_name = "25_SB3_RL_tests"
+    group_name = "50_SB3_RL_tests"
     reward_function = PST_V2G_ProfitMax_reward    
     state_function = PST_V2G_ProfitMax_state    
 
     run_name = f'{run_name}'
 
-    run = wandb.init(project='DT4EVs',
+    run = wandb.init(project='DT4EVs_PES',
                      sync_tensorboard=True,
                      group=group_name,
                      entity='stavrosorf',
                      name=run_name,
-                     save_code=True,
+                    #  save_code=True,
                      )
 
     gym.envs.register(id='evs-v0', entry_point='ev2gym.models.ev2gym_env:EV2Gym',

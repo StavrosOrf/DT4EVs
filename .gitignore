@@ -166,7 +166,7 @@ results/
 replay/
 trajectories/
 wandb/
-saved_models/
+# saved_models/
 eval_replays/
 slurm_logs/
 eval_logs/

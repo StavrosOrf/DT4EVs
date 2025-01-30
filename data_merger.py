@@ -167,27 +167,37 @@ def merge_datasets():
 def create_mixed_dataset():
     
     # create dataset consisting of 1000 trajectories x% optimal and 100-x% random
-    opt_dataset_path = f"./trajectories/PST_V2G_ProfixMax_25_optimal_25_1000.pkl.gz"
+    opt_dataset_path = f"./trajectories/PST_V2G_ProfixMax_50_PES_optimal_50_5000.pkl.gz"
     with gzip.open(opt_dataset_path, 'rb') as f:
         opt_trajectories = pickle.load(f)
     
-    random_dataset_path = f"./trajectories/PST_V2G_ProfixMax_25_random_25_1000.pkl.gz"
+    random_dataset_path = f"./trajectories/PST_V2G_ProfixMax_50_PES_random_50_5000.pkl.gz"
     with gzip.open(random_dataset_path, 'rb') as f:
         random_trajectories = pickle.load(f)
+    
+    bau_dataset_path = f"./trajectories/PST_V2G_ProfixMax_50_PES_bau_50_5000.pkl.gz"
+    with gzip.open(bau_dataset_path, 'rb') as f:
+        bau_trajectories = pickle.load(f)
         
-    mixed_dataset_50 = opt_trajectories[:500] + random_trajectories[:500]    
-    mixed_dataset_75 = opt_trajectories[:750] + random_trajectories[:250]
-    mixed_dataset_25 = opt_trajectories[:250] + random_trajectories[:750]
+    mixed_dataset_50 = opt_trajectories[:2500] + random_trajectories[:2500]    
+    # mixed_dataset_75 = opt_trajectories[:750] + random_trajectories[:250]
+    # mixed_dataset_25 = opt_trajectories[:250] + random_trajectories[:750]
     
 
-    with gzip.open(f"./trajectories/PST_V2G_ProfixMax_25_mixed_opt_50_25_1000.pkl.gz", 'wb') as f:
-        pickle.dump(mixed_dataset_50, f)
+    # with gzip.open(f"./trajectories/PST_V2G_ProfixMax_50_PES_mixed_optimal_random_5000.pkl.gz", 'wb') as f:
+    #     pickle.dump(mixed_dataset_50, f)
     
-    with gzip.open(f"./trajectories/PST_V2G_ProfixMax_25_mixed_opt_75_25_1000.pkl.gz", 'wb') as f:
-        pickle.dump(mixed_dataset_75, f)
+    with gzip.open(f"./trajectories/PST_V2G_ProfixMax_50_PES_mixed_optimal_bau_5000.pkl.gz", 'wb') as f:
+        pickle.dump(opt_trajectories[:2500] + bau_trajectories[:2500], f)
+    
+    with gzip.open(f"./trajectories/PST_V2G_ProfixMax_50_PES_mixed_optimal_random_bau_5000.pkl.gz", 'wb') as f:
+        pickle.dump(opt_trajectories[:2500] + random_trajectories[:1250] + bau_trajectories[:1250], f)
+    
+    # with gzip.open(f"./trajectories/PST_V2G_ProfixMax_25_mixed_opt_75_25_1000.pkl.gz", 'wb') as f:
+    #     pickle.dump(mixed_dataset_75, f)
         
-    with gzip.open(f"./trajectories/PST_V2G_ProfixMax_25_mixed_opt_25_25_1000.pkl.gz", 'wb') as f:
-        pickle.dump(mixed_dataset_25, f)
+    # with gzip.open(f"./trajectories/PST_V2G_ProfixMax_25_mixed_opt_25_25_1000.pkl.gz", 'wb') as f:
+    #     pickle.dump(mixed_dataset_25, f)
 
 def chop_dataset(b=3000):
     
@@ -213,7 +223,7 @@ def chop_dataset(b=3000):
         pickle.dump(trajectories, f)
     
 if __name__ == "__main__":
-    check_datasets()
+    # check_datasets()
     # chop_dataset()
-    # create_mixed_dataset()
+    create_mixed_dataset()
     # merge_datasets()

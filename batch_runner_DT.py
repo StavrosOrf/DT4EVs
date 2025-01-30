@@ -57,10 +57,20 @@ big_datasets_list = [
 ]
 
 datasets_50_list = [
-    'random_50_5000',
+    # 'random_50_5000',
     # 'optimal_50_5000',
-    'bau_50_5000',
+    'mixed_50_optimal_random',
+    'mixed_50_optimal_bau',
+    'mixed_50_optimal_random_bau',
+    # 'bau_50_5000',
 ]
+
+# datasets_50_list = [
+#     'random_50_5000',
+#     # 'optimal_50_5000',
+#     'bau_50_5000',
+# ]
+
 
 # Extra arguments for the python script
 num_steps_per_iter = 1000

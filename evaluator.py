@@ -57,7 +57,7 @@ def evaluator():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     ############# Simulation Parameters #################
-    n_test_cycles = 1
+    n_test_cycles = 100
     SAVE_REPLAY_BUFFER = False
     SAVE_EV_PROFILES = False
 
@@ -115,10 +115,10 @@ def evaluator():
         # RoundRobin_GF_off_allowed,
         # RoundRobin_GF,
         # RoundRobin,
-
-        # mo_PST_V2GProfitMaxOracleGB,
+        # eMPC_V2G_v2,
+        mo_PST_V2GProfitMaxOracleGB,
         # eMPC_V2G,
-        eMPC_V2G_v2,
+        
         # # V2GProfitMaxLoadsOracle,
         # V2GProfitMaxOracleGB,
         # V2GProfitMaxOracle,

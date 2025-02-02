@@ -114,9 +114,10 @@ class eMPC_V2G_v2(MPC):
                     model.addConstr((gp.quicksum((u[j] - u[j+1])
                                                  for index, j in enumerate(
                         range(i*self.nb, (i+1)*self.nb, 2))
-                        if self.cs_transformers[index] == tr_index) +
-                        self.tr_loads[tr_index, i] +
-                        self.tr_pv[tr_index, i] <=
+                        if self.cs_transformers[index] == tr_index)
+                        # self.tr_loads[tr_index, i] +
+                        # self.tr_pv[tr_index, i] 
+                        <=
                         self.tr_power_limit[tr_index, i]),
                         name=f'constr5_{tr_index}_t{i}')
 
@@ -125,9 +126,10 @@ class eMPC_V2G_v2(MPC):
                     model.addConstr((gp.quicksum((u[j] - u[j+1])
                                                  for index, j in enumerate(
                         range(i*self.nb, (i+1)*self.nb, 2))
-                        if self.cs_transformers[index] == tr_index) +
-                        self.tr_loads[tr_index, i] +
-                        self.tr_pv[tr_index, i] >=
+                        if self.cs_transformers[index] == tr_index)
+                        # self.tr_loads[tr_index, i] +
+                        # self.tr_pv[tr_index, i] 
+                        >=
                         -self.tr_power_limit[tr_index, :].max()),
                         name=f'constr5_{tr_index}_t{i}')
 
@@ -334,9 +336,10 @@ class eMPC_G2V_v2(MPC):
                 model.addConstr((gp.quicksum(u[j]
                                              for index, j in enumerate(
                                                  range(i*self.nb, (i+1)*self.nb))
-                                             if self.cs_transformers[index] == tr_index) +
-                                 self.tr_loads[tr_index, i] +
-                                 self.tr_pv[tr_index, i] <=
+                                             if self.cs_transformers[index] == tr_index)
+                                #  self.tr_loads[tr_index, i] +
+                                #  self.tr_pv[tr_index, i] 
+                                 <=
                                  self.tr_power_limit[tr_index, i]),
                                 name=f'constr5_{tr_index}_t{i}')
 
@@ -347,7 +350,8 @@ class eMPC_G2V_v2(MPC):
                                                  range(i*self.nb, (i+1)*self.nb))
                                              if self.cs_transformers[index] == tr_index) +
                                  self.tr_loads[tr_index, i] +
-                                 self.tr_pv[tr_index, i] >=
+                                 self.tr_pv[tr_index, i] 
+                                 >=
                                  -self.tr_power_limit[tr_index, :].max()),
                                 name=f'constr5_{tr_index}_t{i}')
 

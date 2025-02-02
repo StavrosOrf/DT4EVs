@@ -57,7 +57,7 @@ def evaluator():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     ############# Simulation Parameters #################
-    n_test_cycles = 100
+    n_test_cycles = 1
     SAVE_REPLAY_BUFFER = False
     SAVE_EV_PROFILES = False
 
@@ -75,13 +75,15 @@ def evaluator():
     # config_file = "./config_files/PST_V2G_ProfixMax_25_G3.yaml"
 
     #diffrent CS number comparison
-    config_file = "./config_files/PST_V2G_ProfixMax_25_CS5.yaml"
-    config_file = "./config_files/PST_V2G_ProfixMax_25_CS50.yaml"
-    config_file = "./config_files/PST_V2G_ProfixMax_25_CS75.yaml"
-    config_file = "./config_files/PST_V2G_ProfixMax_25_CS100.yaml"    
-
+    # config_file = "./config_files/PST_V2G_ProfixMax_25_CS5.yaml"
+    # config_file = "./config_files/PST_V2G_ProfixMax_25_CS50.yaml"
+    # config_file = "./config_files/PST_V2G_ProfixMax_25_CS75.yaml"
+    # config_file = "./config_files/PST_V2G_ProfixMax_25_CS100.yaml"            
     
     # config_file = "./config_files/PST_V2G_ProfixMax_250.yaml"
+            
+    #### PES exps
+    config_file = "./config_files/PST_V2G_ProfixMax_50_PES.yaml"
 
     if "PST_V2G_ProfixMax" in config_file:
         state_function_Normal = PST_V2G_ProfitMax_state
@@ -99,19 +101,24 @@ def evaluator():
         # "gnn_act_emb_run_42_K=2_batch=128_dataset=optimal_2000_embed_dim=128_n_layer=3_n_head=451760.optimal_2000.835025",
 
         ################## Best models ##################################
-        'gnn_act_emb_run_40_K=10_dataset=optimal_25_1000_25724_537244',
+        # 'gnn_act_emb_run_40_K=10_dataset=optimal_25_1000_25724_537244',
         # 'dt_run_10_K=10_dataset=bau_10000_94967_118081',
         # 'QT_run_30_K=2_dataset=optimal_1000_87175_301984',
         #################################################################
+        
+        ################## Best models PES_50 ##################################
+        'gnn_act_emb_run_10_K=5_dataset=mixed_50_optimal_random_92276_366128',
+        'ppo_run_1_95066',
 
+        #################################################################
         # ChargeAsLateAsPossible,
         # RoundRobin_GF_off_allowed,
         # RoundRobin_GF,
         # RoundRobin,
 
-        mo_PST_V2GProfitMaxOracleGB
+        # mo_PST_V2GProfitMaxOracleGB,
         # eMPC_V2G,
-        # eMPC_V2G_v2,
+        eMPC_V2G_v2,
         # # V2GProfitMaxLoadsOracle,
         # V2GProfitMaxOracleGB,
         # V2GProfitMaxOracle,
@@ -285,7 +292,7 @@ def evaluator():
                                                           })
                                 env = gym.make('evs-v0')
 
-                                load_path = f'./eval_models/{algorithm}/best_model.zip'
+                                load_path = f'./saved_models/{algorithm}/best_model.zip'
 
                                 # initialize the timer
                                 timer = time.time()

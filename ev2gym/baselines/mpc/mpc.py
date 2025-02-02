@@ -14,7 +14,7 @@ class MPC(ABC):
 
     def __init__(self,
                  env,
-                 control_horizon=25,
+                 control_horizon=10,
                  verbose=False,
                  time_limit=200,
                  output_flag=0,
@@ -236,6 +236,14 @@ class MPC(ABC):
         for i, tr in enumerate(self.env.transformers):
             self.tr_power_limit[i, :] = tr.get_power_limits(
                 step=t, horizon=self.control_horizon)
+            # print(f'power limits {tr.get_power_limits(step=t, horizon=self.control_horizon).shape}')
+            setpoints = self.env.power_setpoints[t:t+self.control_horizon]
+            # print(f'setpoint {setpoints.shape}')
+            if setpoints.shape[0] < self.control_horizon:
+                setpoints = np.concatenate((setpoints, np.zeros(self.control_horizon - setpoints.shape[0])))
+            # print(f'new setpoint {setpoints.shape}')                
+            
+            self.tr_power_limit[i, :] = setpoints
 
             self.tr_pv[i, :] = np.zeros(self.control_horizon)
             self.tr_pv[i, 0] = tr.solar_power[tr.current_step+1]

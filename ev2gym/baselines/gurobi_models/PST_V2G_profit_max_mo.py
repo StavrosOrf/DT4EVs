@@ -19,8 +19,8 @@ class mo_PST_V2GProfitMaxOracleGB():
 
     def __init__(self,
                  replay_path=None,
-                 timelimit=None,
-                 MIPGap=None,
+                 timelimit=120,
+                 MIPGap=0.1,
                  verbose=True,
                  **kwargs):
 

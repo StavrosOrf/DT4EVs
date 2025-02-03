@@ -6,6 +6,10 @@ import datetime
 import math
 import seaborn as sns
 
+def unwrap_env(env):
+    while hasattr(env, "env"):
+        env = env.env  # Go one level deeper
+    return env
 
 def plot_comparable_EV_SoC(results_path,
                            save_path=None,
@@ -26,6 +30,10 @@ def plot_comparable_EV_SoC(results_path,
 
     for index, key in enumerate(replay.keys()):
         env = replay[key]
+        print(f'env: {env}, type: {str(type(env))}')
+        if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
+            print('Order enforcing')
+            env = unwrap_env(env) 
 
         # color_list_map = plt.cm.get_cmap('Set1', len(replay.keys()))
         # color_list = color_list_map(np.linspace(0, 1, len(replay.keys())))
@@ -178,6 +186,10 @@ def plot_actual_power_vs_setpoint(results_path,
 
     for index, key in enumerate(replay.keys()):
         env = replay[key]
+        print(f'env: {env}, type: {str(type(env))}')
+        if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
+            print('Order enforcing')
+            env = unwrap_env(env) 
 
         date_range = pd.date_range(start=env.sim_starting_date,
                                    end=env.sim_starting_date +
@@ -288,6 +300,10 @@ def plot_comparable_EV_SoC_single(results_path,
 
     for index, key in enumerate(replay.keys()):
         env = replay[key]
+        print(f'env: {env}, type: {str(type(env))}')
+        if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
+            print('Order enforcing')
+            env = unwrap_env(env) 
 
         date_range = pd.date_range(start=env.sim_starting_date,
                                    end=env.sim_starting_date +
@@ -312,7 +328,7 @@ def plot_comparable_EV_SoC_single(results_path,
 
         ]
 
-        cs_to_plot = 24
+        cs_to_plot = 18
         counter = 1
         for cs in env.charging_stations:
             if counter != cs_to_plot:
@@ -379,8 +395,8 @@ def plot_comparable_EV_SoC_single(results_path,
             #            fontsize=14)
 
             starting_date = env.sim_starting_date + \
-                datetime.timedelta(hours=16)
-            ending_date = env.sim_starting_date + datetime.timedelta(hours=55)
+                datetime.timedelta(hours=10)
+            ending_date = env.sim_starting_date + datetime.timedelta(hours=45)
 
             plt.xlim([starting_date, ending_date])
             date_range_print = pd.date_range(start=starting_date,
@@ -592,6 +608,10 @@ def plot_comparable_CS_Power(results_path, save_path=None, algorithm_names=None)
     plt.grid(True, which='major', axis='both')
     for index, key in enumerate(replay.keys()):
         env = replay[key]
+        print(f'env: {env}, type: {str(type(env))}')
+        if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
+            print('Order enforcing')
+            env = unwrap_env(env) 
 
         date_range = pd.date_range(start=env.sim_starting_date,
                                    end=env.sim_starting_date +
@@ -756,20 +776,15 @@ def plot_comparable_CS_Power_scatterplot(results_path, save_path=None, algorithm
     # ax.spines['bottom'].set_linewidth(2)
 
     plt.grid(True, which='major', axis='both')
+    
 
     all_data = pd.DataFrame([], index=[])
     for index, key in enumerate(replay.keys()):
         env = replay[key]
-
-        date_range = pd.date_range(start=env.sim_starting_date,
-                                   end=env.sim_starting_date +
-                                   (env.simulation_length - 1) *
-                                   datetime.timedelta(
-                                       minutes=env.timescale),
-                                   freq=f'{env.timescale}min')
-        date_range_print = pd.date_range(start=env.sim_starting_date,
-                                         end=env.sim_date,
-                                         periods=7)
+        print(f'env: {env}, type: {str(type(env))}')
+        if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
+            print('Order enforcing')
+            env = unwrap_env(env)        
 
         color_list_map = plt.cm.get_cmap('Set1', len(replay.keys()))
         color_list = color_list_map(np.linspace(0, 1, len(replay.keys())))
@@ -801,16 +816,17 @@ def plot_comparable_CS_Power_scatterplot(results_path, save_path=None, algorithm
                             'Action': [a],
                             'Algorithm': algorithm_names[index]
                         })
-                        all_data = pd.concat([all_data, df])
+                        all_data = pd.concat([all_data, df])            
                         
     all_data = all_data.reset_index(drop=True)
+    
+    print(f'unique algorithms: {all_data["Algorithm"].unique()}')
     
     sns.stripplot(data=all_data,
                   x='Algorithm',
                   y='Action',
                   hue='Algorithm',                  
                   jitter=0.35,
-
                   palette=color_list,
                   size=2)
     
@@ -840,21 +856,22 @@ def plot_comparable_CS_Power_scatterplot(results_path, save_path=None, algorithm
 
 if __name__ == '__main__':
 
-    results_path = './results/eval_25cs_1tr_PST_V2G_ProfixMax_25_5_algos_1_exp_2025_01_09_503369/'
+    # results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_100_exp_2025_02_02_868691/'
+    results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_03_727655/'
     save_path = './results_analysis/figs/'
 
-    algorithm_names = ['BaU', 'GNN-DT', 'DT', 'QT', 'Optimal (Offline)']
+    algorithm_names = ['CAFAP','BaU','GNN + DT','PPO', 'Optimal (Offline)']
     marker_list = ['o', 's', 'D', '^', 'v']
     color_list = ['b', 'g', 'r', 'c', 'm']
 
     plt.rcParams['font.family'] = 'serif'
 
-    # plot_comparable_EV_SoC_single(results_path=results_path + 'plot_results_dict.pkl',
-    #                               save_path=save_path,
-    #                               algorithm_names=algorithm_names,
-    #                               color_list=color_list,
-    #                               marker_list=marker_list
-    #                               )
+    plot_comparable_EV_SoC_single(results_path=results_path + 'plot_results_dict.pkl',
+                                  save_path=save_path,
+                                  algorithm_names=algorithm_names,
+                                  color_list=color_list,
+                                  marker_list=marker_list
+                                  )
     # plot_comparable_CS_Power(
     #     results_path=results_path + 'plot_results_dict.pkl',
     #     save_path=save_path,
@@ -875,11 +892,11 @@ if __name__ == '__main__':
     #                        marker_list=marker_list
     #                        )
 
-    # plot_actual_power_vs_setpoint(
-    #     results_path=results_path + 'plot_results_dict.pkl',
-    #     save_path=save_path,
-    #     algorithm_names=algorithm_names
-    # )
+    plot_actual_power_vs_setpoint(
+        results_path=results_path + 'plot_results_dict.pkl',
+        save_path=save_path,
+        algorithm_names=algorithm_names
+    )
 
     # plot_total_power_V2G(
     #     results_path=results_path + 'plot_results_dict.pkl',

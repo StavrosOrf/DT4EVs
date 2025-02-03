@@ -57,7 +57,7 @@ def evaluator():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     ############# Simulation Parameters #################
-    n_test_cycles = 100
+    n_test_cycles = 1
     SAVE_REPLAY_BUFFER = False
     SAVE_EV_PROFILES = False
 
@@ -431,6 +431,7 @@ def evaluator():
                                             env.get_attr('env')[0])
 
                                     stats = stats[0]
+                                algorithm_name = algorithm.split('_')[0]
 
                             else:
                                 simple_state = state_function_Normal(
@@ -460,7 +461,6 @@ def evaluator():
                             rewards.append(reward)
 
                     if done:
-
                         results_i = pd.DataFrame({'run': k,
                                                   'Algorithm': algorithm_name,
                                                   'algorithm_version': algorithm,
@@ -499,7 +499,7 @@ def evaluator():
                             results = pd.concat(
                                 [results, results_i])
 
-                        if algorithm in [PPO, A2C, DDPG, SAC, TD3, TQC, TRPO, ARS, RecurrentPPO]:
+                        if any(algo in algorithm_name for algo in ['ppo', 'a2c', 'ddpg', 'tqc', 'trpo', 'ars', 'rppo']):
                             env = saved_env
 
                         plot_results_dict[str(

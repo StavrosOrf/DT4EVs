@@ -235,18 +235,18 @@ def plot_actual_power_vs_setpoint(results_path,
 
         
         if index == 1:
-            plt.yticks(np.arange(0, 125, 20), 
+            plt.yticks(np.arange(0, 125, 40), 
                        fontsize=12)
         elif index == 2:
-            plt.yticks(np.arange(0, 125, 20),
-                          labels=' '*7,
+            plt.yticks(np.arange(0, 125, 40),
+                          labels=' '*4,
                           fontsize=12)
         elif index == 3:
-            plt.yticks(np.arange(-40, 125, 20), 
+            plt.yticks(np.arange(-40, 125, 40), 
                        fontsize=12)
         else:
-            plt.yticks(np.arange(-40, 125, 20),
-                          labels=' '*9,
+            plt.yticks(np.arange(-40, 125, 40),
+                          labels=' '*5,
                           fontsize=12)
         
         if index == 1 or index == 3:
@@ -886,23 +886,23 @@ def plot_comparable_CS_Power_scatterplot(results_path, save_path=None, algorithm
 if __name__ == '__main__':
 
     # results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_100_exp_2025_02_02_868691/'
-    # results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_03_727655/'
-    results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_04_757687/'
+    results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_03_727655/'
+    # results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_04_757687/'
     save_path = './results_analysis/figs/'
 
-    algorithm_names = ['CAFAP','BaU','PPO','GNN + DT', 'Optimal (Offline)']
-    # algorithm_names = ['CAFAP','BaU','GNN + DT','PPO', 'Optimal (Offline)']
+    algorithm_names = ['CAFAP','BaU','PPO','GNN + LLM', 'Optimal (Offline)']
+    algorithm_names = ['CAFAP','BaU','GNN + LLM','PPO', 'Optimal (Offline)']
     marker_list = ['o', 's', 'D', '^', 'v']
     color_list = ['b', 'g', 'r', 'c', 'm']
 
     plt.rcParams['font.family'] = 'serif'
 
-    # plot_comparable_EV_SoC_single(results_path=results_path + 'plot_results_dict.pkl',
-    #                               save_path=save_path,
-    #                               algorithm_names=algorithm_names,
-    #                               color_list=color_list,
-    #                               marker_list=marker_list
-    #                               )
+    plot_comparable_EV_SoC_single(results_path=results_path + 'plot_results_dict.pkl',
+                                  save_path=save_path,
+                                  algorithm_names=algorithm_names,
+                                  color_list=color_list,
+                                  marker_list=marker_list
+                                  )
     # plot_comparable_CS_Power(
     #     results_path=results_path + 'plot_results_dict.pkl',
     #     save_path=save_path,
@@ -923,11 +923,11 @@ if __name__ == '__main__':
     #                        marker_list=marker_list
     #                        )
 
-    plot_actual_power_vs_setpoint(
-        results_path=results_path + 'plot_results_dict.pkl',
-        save_path=save_path,
-        algorithm_names=algorithm_names
-    )
+    # plot_actual_power_vs_setpoint(
+    #     results_path=results_path + 'plot_results_dict.pkl',
+    #     save_path=save_path,
+    #     algorithm_names=algorithm_names
+    # )
 
     # plot_total_power_V2G(
     #     results_path=results_path + 'plot_results_dict.pkl',

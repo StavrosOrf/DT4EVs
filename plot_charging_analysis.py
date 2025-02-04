@@ -181,10 +181,12 @@ def plot_actual_power_vs_setpoint(results_path,
         replay = pickle.load(f)
 
     plt.close('all')
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(6, 4))
     plt.rc('font', family='serif')
 
     for index, key in enumerate(replay.keys()):
+        if index == 0:
+            continue
         env = replay[key]
         print(f'env: {env}, type: {str(type(env))}')
         if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
@@ -197,12 +199,13 @@ def plot_actual_power_vs_setpoint(results_path,
                                    datetime.timedelta(
                                        minutes=env.timescale),
                                    freq=f'{env.timescale}min')
+        
         date_range_print = pd.date_range(start=env.sim_starting_date,
                                          end=env.sim_date,
-                                         periods=7)
+                                         periods=5)
 
         # plot the actual power vs the setpoint power for each algorithm in subplots
-        plt.subplot(2, 3, index+1)
+        plt.subplot(2, 2, index)
         plt.grid(True, which='major', axis='both')
 
         actual_power = env.current_power_usage
@@ -210,33 +213,54 @@ def plot_actual_power_vs_setpoint(results_path,
 
         plt.step(date_range, actual_power.T, alpha=0.9, color='#00429d')
         plt.step(date_range, setpoints.T, alpha=1, color='#93003a')
+        
+        # fill between the actual power and 0
+        plt.fill_between(date_range, actual_power.T, 0, step='post', alpha=0.3, color='#00429d')        
+        
 
         plt.axhline(0, color='black', lw=2)
-        plt.title(f'{algorithm_names[index]}', fontsize=14)
+        plt.title(f'{algorithm_names[index]}', fontsize=13)
 
         plt.yticks(fontsize=14)
 
-        # if index == len(replay) - 1:
-        plt.xticks(ticks=date_range_print,
-                   labels=[
-                       f'{d.hour:2d}:{d.minute:02d}' for d in date_range_print],
-                   rotation=45,
-                   fontsize=14)
-        # plt.xlabel('Time', fontsize=28)
-        # else:
-        #     plt.xticks(ticks=date_range_print,
-        #                labels=[' ' for d in date_range_print])
+        if index == 3 or index == 4:
+            plt.xticks(ticks=date_range_print,
+                    labels=[
+                        f'{d.hour:2d}:{d.minute:02d}' for d in date_range_print],
+                    # rotation=45,
+                    fontsize=10)        
+        else:
+            plt.xticks(ticks=date_range_print,
+                       labels=[' ' for d in date_range_print])
 
-        # if index == len(replay) // 2:
-        plt.ylabel('Power (kW)', fontsize=14)
+        
+        if index == 1:
+            plt.yticks(np.arange(0, 125, 20), 
+                       fontsize=12)
+        elif index == 2:
+            plt.yticks(np.arange(0, 125, 20),
+                          labels=' '*7,
+                          fontsize=12)
+        elif index == 3:
+            plt.yticks(np.arange(-40, 125, 20), 
+                       fontsize=12)
+        else:
+            plt.yticks(np.arange(-40, 125, 20),
+                          labels=' '*9,
+                          fontsize=12)
+        
+        if index == 1 or index == 3:
+            plt.ylabel('Power [kW]', fontsize=11)
+        else:
+            plt.ylabel('', fontsize=12)
 
         plt.xlim([env.sim_starting_date, env.sim_date])
-        plt.ylim([0, 90])
+        # plt.ylim([0, 120])
 
     # Put the legend under the plot in a separate axis
-    plt.legend(['Actual Power', 'Power Setpoint'], loc='upper center',
-               bbox_to_anchor=(1.7, 0.7),
-               fancybox=True, shadow=True, ncol=1, fontsize=14)
+    plt.legend(['Aggregated Power', 'Dynamic Power Limit'], loc='upper center',
+               bbox_to_anchor=(-0.15,-0.2),
+               fancybox=True, shadow=True, ncol=2, fontsize=12)
 
     plt.subplots_adjust(
         left=0.055,    # Space from the left of the figure
@@ -259,7 +283,7 @@ def plot_actual_power_vs_setpoint(results_path,
                 bbox_inches='tight',
                 )
 
-    # plt.show()
+    plt.show()
 
 
 def plot_comparable_EV_SoC_single(results_path,
@@ -292,7 +316,7 @@ def plot_comparable_EV_SoC_single(results_path,
              linestyle='--', linewidth=0.5)
 
     # plot a horizontal line at 0.8
-    plt.axhline(y=0.8,
+    plt.axhline(y=80,
                 color=sns.color_palette()[4],
                 linestyle='--',
                 alpha=0.5,
@@ -355,6 +379,7 @@ def plot_comparable_EV_SoC_single(results_path,
                     # fill y with 0 before and after to match the length of df
                     y = np.concatenate(
                         [np.zeros(t_arr), y, np.zeros(len(df) - t_dep)])
+                    y = y * 100
 
                     markevery = 5
                     if i == 0:
@@ -381,13 +406,13 @@ def plot_comparable_EV_SoC_single(results_path,
 
             # plt.title(f'Charging Station {cs.id + 1}', fontsize=24)
 
-            plt.ylabel('SoC [-]', fontsize=14)
-            plt.yticks(np.arange(0, 1.1, 0.2),
+            plt.ylabel('SoC [%]', fontsize=14)
+            plt.yticks(np.arange(0, 110, 20),
                        fontsize=14)
 
             # plt.xlabel('Time', fontsize=14)
 
-            plt.ylim([0.1, 1.02])
+            plt.ylim([20, 102])
             # plt.xlim([env.sim_starting_date, env.sim_date])
             # plt.xticks(ticks=date_range_print,
             #            labels=[f'{d.hour:2d}:{d.minute:02d}' for d in date_range_print],
@@ -396,7 +421,7 @@ def plot_comparable_EV_SoC_single(results_path,
 
             starting_date = env.sim_starting_date + \
                 datetime.timedelta(hours=10)
-            ending_date = env.sim_starting_date + datetime.timedelta(hours=45)
+            ending_date = env.sim_starting_date + datetime.timedelta(hours=40)
 
             plt.xlim([starting_date, ending_date])
             date_range_print = pd.date_range(start=starting_date,
@@ -462,6 +487,10 @@ def plot_total_power_V2G(results_path, save_path=None, algorithm_names=None):
 
     for index, key in enumerate(replay.keys()):
         env = replay[key]
+        print(f'env: {env}, type: {str(type(env))}')
+        if str(type(env)) == "<class 'gymnasium.wrappers.common.OrderEnforcing'>":
+            print('Order enforcing')
+            env = unwrap_env(env) 
 
         date_range = pd.date_range(start=env.sim_starting_date,
                                    end=env.sim_starting_date +
@@ -857,32 +886,34 @@ def plot_comparable_CS_Power_scatterplot(results_path, save_path=None, algorithm
 if __name__ == '__main__':
 
     # results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_100_exp_2025_02_02_868691/'
-    results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_03_727655/'
+    # results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_03_727655/'
+    results_path = './results/eval_50cs_1tr_PST_V2G_ProfixMax_50_PES_5_algos_1_exp_2025_02_04_757687/'
     save_path = './results_analysis/figs/'
 
-    algorithm_names = ['CAFAP','BaU','GNN + DT','PPO', 'Optimal (Offline)']
+    algorithm_names = ['CAFAP','BaU','PPO','GNN + DT', 'Optimal (Offline)']
+    # algorithm_names = ['CAFAP','BaU','GNN + DT','PPO', 'Optimal (Offline)']
     marker_list = ['o', 's', 'D', '^', 'v']
     color_list = ['b', 'g', 'r', 'c', 'm']
 
     plt.rcParams['font.family'] = 'serif'
 
-    plot_comparable_EV_SoC_single(results_path=results_path + 'plot_results_dict.pkl',
-                                  save_path=save_path,
-                                  algorithm_names=algorithm_names,
-                                  color_list=color_list,
-                                  marker_list=marker_list
-                                  )
+    # plot_comparable_EV_SoC_single(results_path=results_path + 'plot_results_dict.pkl',
+    #                               save_path=save_path,
+    #                               algorithm_names=algorithm_names,
+    #                               color_list=color_list,
+    #                               marker_list=marker_list
+    #                               )
     # plot_comparable_CS_Power(
     #     results_path=results_path + 'plot_results_dict.pkl',
     #     save_path=save_path,
     #     algorithm_names=algorithm_names
     # )
 
-    plot_comparable_CS_Power_scatterplot(
-        results_path=results_path + 'plot_results_dict.pkl',
-        save_path=save_path,
-        algorithm_names=algorithm_names
-    )
+    # plot_comparable_CS_Power_scatterplot(
+    #     results_path=results_path + 'plot_results_dict.pkl',
+    #     save_path=save_path,
+    #     algorithm_names=algorithm_names
+    # )
 
     # exit()
     # plot_comparable_EV_SoC(results_path=results_path + 'plot_results_dict.pkl',

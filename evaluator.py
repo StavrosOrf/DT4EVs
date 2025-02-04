@@ -47,7 +47,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 # set seeds
-seed = 9 #6
+seed = 10 #6
 np.random.seed(seed)
 torch.manual_seed(seed)
 random.seed(seed)
@@ -107,9 +107,8 @@ def evaluator():
         #################################################################
         
         ################## Best models PES_50 ##################################
-        'gnn_act_emb_run_10_K=5_dataset=mixed_50_optimal_random_92276_366128',
         'ppo_run_1_95066',
-
+        'gnn_act_emb_run_10_K=5_dataset=mixed_50_optimal_random_92276_366128',
         #################################################################
         # ChargeAsLateAsPossible,
         # RoundRobin_GF_off_allowed,

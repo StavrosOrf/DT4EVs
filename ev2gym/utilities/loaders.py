@@ -413,7 +413,7 @@ def load_electricity_prices(env) -> Tuple[np.ndarray, np.ndarray]:
     charge_prices = np.zeros((env.cs, env.simulation_length))
     discharge_prices = np.zeros((env.cs, env.simulation_length))
     # for every simulation step, take the price of the corresponding hour
-    sim_temp_date = env.sim_starting_date
+    sim_temp_date = env.sim_date
     for i in range(env.simulation_length):
 
         year = sim_temp_date.year

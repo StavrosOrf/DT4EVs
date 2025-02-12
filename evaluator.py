@@ -57,7 +57,7 @@ def evaluator():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     ############# Simulation Parameters #################
-    n_test_cycles = 1
+    n_test_cycles = 25
     SAVE_REPLAY_BUFFER = False
     SAVE_EV_PROFILES = False
 

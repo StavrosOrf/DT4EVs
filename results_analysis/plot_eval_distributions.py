@@ -67,48 +67,117 @@ def evaluator(config_files):
             pickle.dump(power_limit, f)
 
 
+# def process_data(config_files):
+
+#     plt.rcParams.update({'font.size': 12})
+#     # plt.rcParams['font.family'] = ['serif']
+#     plt.rcParams['font.family'] = 'serif'
+
+#     plt.figure(figsize=(10, 5))
+
+#     for scenario in config_files:
+#         scenario = scenario.split("/")[-1].split(".")[0]
+#         print(f"Processing {scenario}...")
+
+#         # load the list of power limits from a pickle file
+#         with open(f"./results_analysis/scenarios/{scenario}_power_limit.pkl", "rb") as f:
+#             power_limit = pickle.load(f)
+
+#         # make power limit to a 2d array
+#         power_limit = np.array(power_limit)
+#         power_limit = power_limit.reshape(-1, power_limit.shape[-1])
+
+#         # plot average and std of the power limit for every step (3000 steps)
+
+#         plt.plot(np.mean(power_limit, axis=0), label=f'{scenario}')
+#         plt.fill_between(range(power_limit.shape[1]),
+#                          np.mean(power_limit, axis=0) -
+#                          np.std(power_limit, axis=0),
+#                          np.mean(power_limit, axis=0) +
+#                          np.std(power_limit, axis=0),
+#                          alpha=0.2,)
+
+#     # plt.title(f"Power Limit for {scenario}",fontsize=12)
+#     plt.xlabel("Time Step", fontsize=12)
+#     plt.ylabel("Power Limit (kW)", fontsize=12)
+#     plt.ylim(0, 250)
+#     plt.xlim(0, 300)
+#     plt.yticks(fontsize=12)
+#     plt.xticks(fontsize=12)
+#     plt.grid()
+#     plt.tight_layout()
+#     plt.savefig(f"./results_analysis/scenarios/power_limit.png")
+
 def process_data(config_files):
-
-    plt.rcParams.update({'font.size': 12})
-    # plt.rcParams['font.family'] = ['serif']
-    plt.rcParams['font.family'] = 'serif'
-
+    # set up fonts and figure size
+    plt.rcParams.update({'font.size': 12, 'font.family': 'serif'})
     plt.figure(figsize=(10, 5))
+    sns.set_theme(style="whitegrid", font="serif")
 
-    for scenario in config_files:
-        scenario = scenario.split("/")[-1].split(".")[0]
+    # will collect one long‐form DataFrame for all scenarios
+    all_dfs = []
+    index = 0
+    for cfg in config_files:
+        # derive scenario name from file path
+        scenario = cfg.split("/")[-1].split(".")[0]
         print(f"Processing {scenario}...")
 
-        # load the list of power limits from a pickle file
+        # load the list of power limits
         with open(f"./results_analysis/scenarios/{scenario}_power_limit.pkl", "rb") as f:
             power_limit = pickle.load(f)
 
-        # make power limit to a 2d array
-        power_limit = np.array(power_limit)
-        power_limit = power_limit.reshape(-1, power_limit.shape[-1])
+        # reshape to (runs, steps)
+        arr = np.array(power_limit)
+        arr = arr.reshape(-1, arr.shape[-1])
 
-        # plot average and std of the power limit for every step (3000 steps)
+        n_runs, n_steps = arr.shape
 
-        plt.plot(np.mean(power_limit, axis=0), label=f'{scenario}')
-        plt.fill_between(range(power_limit.shape[1]),
-                         np.mean(power_limit, axis=0) -
-                         np.std(power_limit, axis=0),
-                         np.mean(power_limit, axis=0) +
-                         np.std(power_limit, axis=0),
-                         alpha=0.2,)
+        # build a long‐form DataFrame: one row per (run, step)
+        df = pd.DataFrame(arr.T, columns=[f"run_{i}" for i in range(n_runs)])
+        df = df.reset_index().melt(id_vars="index",
+                                   var_name="run",
+                                   value_name="power_limit")
+        df.rename(columns={"index": "time_step"}, inplace=True)
+        
+        if index == 0:
+            case_name = "Original"
+        elif index == 1:
+            case_name = "Small"
+        elif index == 2:
+            case_name = "Medium"
+        elif index == 3:
+            case_name = "Extreme"
+        index += 1
+        
+        df["scenario"] = case_name
 
-    # plt.title(f"Power Limit for {scenario}",fontsize=12)
-    plt.xlabel("Time Step", fontsize=12)
-    plt.ylabel("Power Limit (kW)", fontsize=12)
-    plt.ylim(0, 250)
-    plt.xlim(0, 300)
-    plt.yticks(fontsize=12)
-    plt.xticks(fontsize=12)
-    plt.grid()
+        all_dfs.append(df)
+
+    # concatenate all scenarios
+    plot_df = pd.concat(all_dfs, ignore_index=True)
+
+    ax = sns.lineplot(
+        data=plot_df,
+        x="time_step",
+        y="power_limit",
+        hue="scenario",
+        estimator="mean",
+        ci="sd",
+        lw=2,
+        alpha=0.9,
+        palette="tab10"        # ← vivid, high-contrast colors
+    )
+
+    # labels, limits, legend
+    ax.set_xlabel("Time Step", fontsize=12)
+    ax.set_ylabel("Power Limit (kW)", fontsize=12)
+    ax.set(ylim=(0, 250), xlim=(0, 300))
+    ax.legend(title="Scenario", loc="upper right")
     plt.tight_layout()
-    plt.savefig(f"./results_analysis/scenarios/power_limit.png")
-
-
+    plt.savefig("./results_analysis/scenarios/power_limit.png")
+    plt.savefig("./results_analysis/scenarios/power_limit.pdf")
+    plt.close()
+    
 def plot_scenario_distributions(config_files):
 
     # Simulation Starting Time
@@ -646,6 +715,7 @@ if __name__ == "__main__":
     # ]
 
     # evaluator(config_files)
-    # process_data(config_files)
-    plot_scenario_distributions_2(config_files)
+    process_data(config_files) #used
+    # plot_scenario_distributions_2(config_files) #used
+    
     # plot_scenario_distributions(config_files)

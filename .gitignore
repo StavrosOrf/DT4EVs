@@ -176,3 +176,5 @@ run_tmp.sh
 results_analysis/data/
 
 model.lp
+
+*.pkl

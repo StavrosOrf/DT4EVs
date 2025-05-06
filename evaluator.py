@@ -76,6 +76,7 @@ def evaluator():
 
     #diffrent CS number comparison
     config_file = "./config_files/PST_V2G_ProfixMax_25_CS5.yaml"
+    config_file = "./config_files/PST_V2G_ProfixMax_25.yaml"    
     config_file = "./config_files/PST_V2G_ProfixMax_25_CS50.yaml"
     config_file = "./config_files/PST_V2G_ProfixMax_25_CS75.yaml"
     config_file = "./config_files/PST_V2G_ProfixMax_25_CS100.yaml"    

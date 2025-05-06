@@ -24,28 +24,29 @@ counter = 0
 # GNN-DT with GAT: 10
 # GNN-DT (full version): gnn_act_emb
 
-for model_type in ["gnn_act_emb",
-                   "dt",
-                   "gnn_dt",
-                   "gnn_in_out_dt",
+for model_type in [
+                  "bc",  # behavior cloning
                    ]:  # dt, gnn_dt, gnn_in_out_dt, bc, gnn_act_emb
-    for action_mask in [True, False]:
+    for action_mask in [False]:
     # for action_mask in [True]:
 
-        if model_type != "gnn_act_emb" and not action_mask:
-            continue
+        # if model_type != "gnn_act_emb" and not action_mask:
+        #     continue
 
         for K in [10]:
-            for gnn_type in ['GCN', 'GAT', 'TagConv']:
+            # for gnn_type in ['GCN', 'GAT']:
 
-                if gnn_type != 'GCN' and model_type != 'gnn_act_emb':
-                    continue
+            #     if gnn_type != 'GCN' and model_type != 'gnn_act_emb':
+            #         continue
                 
-                if model_type == "gnn_act_emb" and not action_mask and gnn_type != 'GCN':
-                    continue
+                # if model_type == "gnn_act_emb" and not action_mask and gnn_type != 'GCN':
+                #     continue
                             
-                for dataset in ["optimal_25_1000"]:
-                    for seed in [0]:  # 128, 512
+                for dataset in ["optimal_10000",
+                                "bau_10000",
+                                "random_10000",
+                                ]:
+                    for seed in [10]:  # 128, 512
                         for n_layer, n_head in [(3, 4)]:  # (3, 1),(3,4)
 
                             # a10 machine config
@@ -54,10 +55,10 @@ for model_type in ["gnn_act_emb",
                             # command = 'tmux new-session -d \; send-keys "  /home/sorfanoudakis/.conda/envs/dt3/bin/python train_DT.py' + \
 
                             temp_name = model_type
-                            if model_type == "gnn_act_emb" and not action_mask:
-                                temp_name += "NoMask"
-                            elif model_type == "gnn_act_emb" and action_mask:
-                                temp_name += f"_{gnn_type}"
+                            # if model_type == "gnn_act_emb" and not action_mask:
+                            #     temp_name += "NoMask"
+                            # elif model_type == "gnn_act_emb" and action_mask:
+                            #     temp_name += f"_{gnn_type}"
 
                             run_name = f'{temp_name}_run_{seed}_K={K}_batch={batch_size}_dataset={dataset}_embed_dim={embed_dim}_n_layer={n_layer}_n_head={n_head}'
                             run_name += str(random.randint(0, 100000))
@@ -77,8 +78,7 @@ for model_type in ["gnn_act_emb",
                                 ' --num_eval_episodes=' + str(num_eval_episodes) + \
                                 ' --log_to_wandb True' + \
                                 ' --action_masking ' + str(action_mask) + \
-                                ' --gnn_type ' + str(gnn_type) + \
-                                ' --group_name ' + '"ablation_1"' + \
+                                ' --group_name ' + '"offline_RL"' + \
                                 ' --name ' +  str(run_name) + \
                                 '" Enter'
 

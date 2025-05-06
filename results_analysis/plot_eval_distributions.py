@@ -72,7 +72,7 @@ def process_data(config_files):
     plt.rcParams.update({'font.size': 12})
     # plt.rcParams['font.family'] = ['serif']
     plt.rcParams['font.family'] = 'serif'
-    
+
     plt.figure(figsize=(10, 5))
 
     for scenario in config_files:
@@ -136,8 +136,6 @@ def plot_scenario_distributions(config_files):
             case_name = "Medium"
         elif index == 3:
             case_name = "Extreme"
-        elif index == 4:
-            case_name = "Extreme+"
 
         EVs = {"arrival_time": [],
                "departure_time": [],
@@ -474,6 +472,161 @@ def plot_scenario_distributions(config_files):
     g2.savefig(f"{save_path}/scenario_distributions_g2.pdf")
 
 
+def plot_scenario_distributions_2(config_files):
+
+    # Simulation Starting Time
+    # Hour and minute do not change after the environment has been reset
+    hour = 5  # Simulation starting hour (24 hour format)
+    minute = 0  # Simulation starting minute (0-59)
+
+    timescale = 15  # in minutes per step
+    simulation_length = 300
+
+    all_data = pd.DataFrame()
+
+    for index, ev_profile_file in enumerate(config_files):
+
+        scenario = ev_profile_file.split("/")[-1].split(".")[0]
+        # load the list of power limits from a pickle file
+        with open(f"./results_analysis/scenarios/{scenario}_ev_profiles.pkl", "rb") as f:
+            ev_profiles = pickle.load(f)
+
+        if index == 0:
+            case_name = "Original"
+        elif index == 1:
+            case_name = "Small"
+        elif index == 2:
+            case_name = "Medium"
+        elif index == 3:
+            case_name = "Extreme"
+
+        EVs = {"arrival_time": [],
+               "departure_time": [],
+               "SoC_at_arrival": [],
+               "battery_capacity": [],
+               "charging_power": [],
+               "time_of_stay": [],
+               "case": case_name
+               }
+
+        for EV in ev_profiles[0]:
+            # print(EV)
+
+            arrival_time = EV.time_of_arrival * timescale + hour * 60 + minute
+            departure_time = EV.time_of_departure * timescale + hour * 60 + minute
+
+            arrival_time = int(arrival_time % 1440)
+            if arrival_time > 1440:
+                arrival_time = arrival_time - 1440
+
+            departure_time = int(departure_time % 1440)
+            if departure_time > 1440:
+                departure_time = departure_time - 1440
+
+            SoC_at_arrival = (EV.battery_capacity_at_arrival /
+                              EV.battery_capacity) * 100
+            battery_capacity = EV.battery_capacity
+            charging_power = EV.max_ac_charge_power
+            time_of_stay = (EV.time_of_departure -
+                            EV.time_of_arrival)*timescale / 60
+
+            EVs["arrival_time"].append(arrival_time)
+            EVs["departure_time"].append(departure_time)
+            EVs["SoC_at_arrival"].append(SoC_at_arrival)
+            EVs["battery_capacity"].append(battery_capacity)
+            EVs["charging_power"].append(charging_power)
+            EVs["time_of_stay"].append(time_of_stay)
+
+            # print(EVs)
+            # exit()
+
+        data = pd.DataFrame(EVs)
+        all_data = pd.concat([all_data, data])
+
+    # plot the histogram of the SoC at arrival
+    plt.figure(figsize=(5, 5))
+    plt.rcParams.update({'font.size': 12})
+    plt.rcParams['font.family'] = ['serif']
+
+    sns.kdeplot(
+        data=all_data,
+        x="SoC_at_arrival",
+        hue="case",
+        common_norm=False,
+        fill=True,
+        alpha=0.5,
+        linewidth=2,
+    )
+
+    plt.xlabel("SoC at Arrival [%]", fontsize=12)
+    plt.ylabel("Density", fontsize=12)
+    # plt.title("SoC at Arrival", fontsize=12)
+    plt.gca().legend_.set_title("Scenario")
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(f"./results_analysis/scenarios/SoC_at_arrival.png")
+    plt.savefig(f"./results_analysis/scenarios/SoC_at_arrival.pdf")
+
+    # plot the histogram of the arrival time
+    plt.figure(figsize=(5, 5))
+
+    sns.kdeplot(
+        data=all_data,
+        x="arrival_time",
+        hue="case",
+        common_norm=False,
+        fill=True,
+        alpha=0.5,
+        linewidth=2,
+    )
+    plt.xlabel("Arrival Time [Hour]", fontsize=12)
+    plt.ylabel("Density", fontsize=12)
+    plt.grid()
+    # plt.gca().legend_.set_title("Scenario")
+    # plt.gca().legend(title="Scenario", loc='upper left')
+    plt.tight_layout()    
+    plt.savefig(f"./results_analysis/scenarios/arrival_time.png")
+    plt.savefig(f"./results_analysis/scenarios/arrival_time.pdf")
+
+    # plot the histogram of the departure time
+    plt.figure(figsize=(5, 5))
+    sns.kdeplot(
+        data=all_data,
+        x="departure_time",
+        hue="case",
+        common_norm=False,
+        fill=True,
+        alpha=0.5,
+        linewidth=2,
+    )
+    plt.xlabel("Departure Time [Hour]", fontsize=12)
+    plt.ylabel("Density", fontsize=12)
+    plt.grid()
+    plt.tight_layout()
+    plt.gca().legend_.set_title("Scenario")
+    plt.savefig(f"./results_analysis/scenarios/departure_time.png")
+    plt.savefig(f"./results_analysis/scenarios/departure_time.pdf")
+
+    # plot the histogram of the time of stay
+    plt.figure(figsize=(5, 5))
+    sns.kdeplot(
+        data=all_data,
+        x="time_of_stay",
+        hue="case",
+        common_norm=False,
+        fill=True,
+        alpha=0.5,
+        linewidth=2,
+    )
+    plt.xlabel("Time of Stay [Hour]", fontsize=12)
+    plt.ylabel("Density", fontsize=12)
+    plt.gca().legend_.set_title("Scenario")
+    plt.grid()
+    plt.tight_layout()
+    plt.savefig(f"./results_analysis/scenarios/time_of_stay.png")
+    plt.savefig(f"./results_analysis/scenarios/time_of_stay.pdf")
+
+
 if __name__ == "__main__":
 
     # load the list of EV profiles from a pickle file
@@ -492,6 +645,7 @@ if __name__ == "__main__":
     #     "./config_files/PST_V2G_ProfixMax_25_CS100.yaml",
     # ]
 
-    evaluator(config_files)
-    process_data(config_files)
-    plot_scenario_distributions(config_files)
+    # evaluator(config_files)
+    # process_data(config_files)
+    plot_scenario_distributions_2(config_files)
+    # plot_scenario_distributions(config_files)

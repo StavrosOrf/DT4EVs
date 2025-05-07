@@ -108,12 +108,15 @@ def main(args):
         project=args.wandb_project,
         # experiment_name=args.wandb_run,
     )
+    
 
     # Train with automatic WandB logging
     print("Starting training...")
     algo.fit(
         dataset,
+        experiment_name=args.exp_name,
         n_steps=args.n_steps,
+        n_steps_per_epoch=1000,
         evaluators={
             'environment': EnvironmentEvaluator(eval_env,
                                                 n_trials=args.num_eval_episodes,
@@ -142,8 +145,9 @@ class WanDBAdapter(LoggerAdapter):
             import wandb
         except ImportError as e:
             raise ImportError("Please install wandb") from e
+        
         self.run = wandb.init(project=project,
-                              group="test",
+                              group="offline_RLDT_25cs_exps",
                               name=experiment_name)
 
         # create save directory
@@ -223,21 +227,17 @@ if __name__ == "__main__":
     parser.add_argument("--n_steps", type=int, default=100_000,
                         help="Total training steps")
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--device", type=str,
-                        choices=["cpu", "cuda"], default="cuda")
+    parser.add_argument("--device", type=str, default="cuda")
 
     # WandB
     parser.add_argument("--wandb_project", type=str, default="DT4EVs",
                         help="WandB project name")
-    parser.add_argument("--wandb_run", type=str, default="run-1",
-                        help="WandB run name")
+    parser.add_argument("--exp_name", type=str, default="run-1",)
 
     parser.add_argument('--config_file', type=str,
                         default="PST_V2G_ProfixMax_25.yaml")
 
     parser.add_argument('--num_eval_episodes', type=int, default=30)
-    parser.add_argument('--eval_replay_path', type=str,
-                        default="./eval_replays/PST_V2G_ProfixMax_25_optimal_25_50/")
 
     args = parser.parse_args()
     main(args)

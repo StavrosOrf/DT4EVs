@@ -5,13 +5,13 @@ This file is used to run various experiments in different tmux panes each.
 import os
 import time
 
-seeds = [0]
+seeds = [20]
 epochs = 150
 steps_per_epoch = 1000 # 200_000
 
 for dataset in ['bau','optimal','random']:
-    # for algorithm in ['bc', 'iql', 'cql']:
-    for algorithm in ['cql']:
+    for algorithm in ['bc','iql', 'cql']:
+    # for algorithm in ['bc']:
         for seed in seeds:
             
             dataset_path = './trajectories/PST_V2G_ProfixMax_25_' + dataset + '_25_10000.pkl.gz'

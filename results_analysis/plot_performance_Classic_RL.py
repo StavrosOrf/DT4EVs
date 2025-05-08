@@ -74,27 +74,54 @@ new_df["algorithm"] = new_df["algorithm"].replace("ddpg", "DDPG")
 # plot the data
 sns.set_theme(style="whitegrid")
 plt.rcParams['font.family'] = 'serif'
-plt.figure(figsize=(4, 5))
-sns.lineplot(data=new_df,
-                x="epoch",
-                y="reward",
-                # colors=["blue", "green", "red", "orange"],
-                hue="algorithm",
-                # hue_order=["TD3", "SAC", "TQC", "PPO"],
-                )
+plt.figure(figsize=(4, 4))
+# ax = sns.lineplot(data=new_df,
+#                 x="epoch",
+#                 y="reward",
+#                 # colors=["blue", "green", "red", "orange"],
+#                 hue="algorithm",
+#               
 
+markers = {
+    "TD3":  "o",
+    "SAC":  "s",
+    "TQC":  "^",
+    "PPO":  "v",
+    "TRPO": "P",
+    "DDPG": "X",
+}
 
+cb = sns.color_palette("colorblind", 6)
+set2 = sns.color_palette("Set2",       6)
+
+# choose which one you like:
+palette = cb      # or palette = set2
+
+ax = sns.lineplot(
+    data=new_df,
+    x="epoch", y="reward",
+    hue="algorithm",
+    style="algorithm",
+    palette=palette,
+    markers=markers,
+    dashes=False,      # solid lines
+    legend="full"      # show color+marker
+)
+
+handles, labels = ax.get_legend_handles_labels()
 #add a horizontal line for the optimal reward
 plt.axhline(y=-2405, color='r', linestyle='--',
             label="Oracle")
 
 # create a new legend for the optimal reward and the algorithms
-plt.legend(loc='center right',
-            title="Algorithm",
-            title_fontsize=14,
-            ncol=2,
-            columnspacing=0.4,
-            fontsize=13)
+# plt.legend(loc='center right',
+#             title="Algorithm",
+#             title_fontsize=14,
+#             ncol=2,
+#             columnspacing=0.4,
+#             fontsize=13)
+
+ax.get_legend().remove()
 # plt.legend(loc='upper left')
 
 # set x and y labels font size
@@ -118,3 +145,26 @@ plt.savefig(f"results_analysis/figs/plot_performance_classicRL.pdf",
 
 plt.savefig(f"results_analysis/figs/plot_performance_onlineRL.png",
             dpi=60)
+
+plt.clf()
+
+
+fig_leg = plt.figure()
+fig_leg.patch.set_facecolor('none')      # transparent background
+leg = fig_leg.legend(
+    handles, labels,
+    loc='center',
+    ncol=3,
+    title=" ",
+    # title_fontsize=15,
+    fontsize=15.5,
+    frameon=False
+)
+# 4. Save to file
+fig_leg.savefig("results_analysis/figs/legend_1.png",
+                bbox_inches='tight', dpi=60, transparent=True)
+fig_leg.savefig("results_analysis/figs/legend_1.pdf",
+                bbox_inches='tight', dpi=100, transparent=True)
+
+plt.close(fig_leg)
+

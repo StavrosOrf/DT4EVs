@@ -3,6 +3,10 @@
 ## ✨ Introduction
 GNN-DT (Graph Neural Network Enhanced Decision Transformer) is a **next-generation AI framework** that seamlessly blends the power of **Graph Neural Networks (GNNs)** with **Decision Transformers (DTs)** to redefine decision-making in dynamic environments. 
 
+Read teh paper published in "Energy and AI":
+- 📄 [Full paper](https://www.sciencedirect.com/science/article/pii/S2666546826000054)
+- 📄 [Preprint](https://arxiv.org/abs/2502.01778)
+
 🔹 **Why GNN-DT?**
 - 🌟 Tackles scalability issues and sparse rewards
 - 🔄 Adapts to ever-changing state-action spaces
@@ -17,7 +21,7 @@ GNN-DT (Graph Neural Network Enhanced Decision Transformer) is a **next-generati
 
 Whether applied to **electric vehicle (EV) charging optimization** or other **complex decision-making tasks**, GNN-DT is your gateway to the **AI-driven optimization.** 🚀
 
-📄 [Read the Preprint](https://arxiv.org/abs/2502.01778)
+
 
 ![image](https://github.com/user-attachments/assets/6de6459b-e681-4f7e-ac2f-10236979b109)
 
